@@ -5,9 +5,20 @@ const path = require('path')
 
 exports.httpReq = functions.https.onRequest(app)
 
-app.use(express.urlencoded({extended: false}))
+// middleware
 
-// frontend programming:
+app.use(express.urlencoded({extended: false}))
+// public is logical name, takes to functions folder, then need to go to static to complete path
+app.use('/public', express.static(path.join(__dirname, '/static')))
+
+// set template engine
+
+// both parameters are predefined constants:
+app.set('view engine', 'ejs')
+// location of ejs files:
+app.set('views', './ejsviews')
+
+// frontend programming
 
 function frontendHandler(req, res) {
     res.sendFile(__dirname + '/prodadmin/prodadmin.html') // send a file to the client
@@ -18,7 +29,20 @@ app.get('/home', frontendHandler);
 app.get('/add', frontendHandler);
 app.get('/show', frontendHandler);
 
-// backend programming:
+// backend programming
+
+// Your web app's Firebase configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyD9lccgaGUFunyHA_wdJhWoaDcPNMN7ENQ",
+    authDomain: "williamb-wsp20.firebaseapp.com",
+    databaseURL: "https://williamb-wsp20.firebaseio.com",
+    projectId: "williamb-wsp20",
+    storageBucket: "williamb-wsp20.appspot.com",
+    messagingSenderId: "211542408687",
+    appId: "1:211542408687:web:3fd56b2129c39e16410a1a"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
 app.get('/', (req, res) => {  // Arrow: fn def is given directly -- request and response object
     res.send('<h1>My Store (note: from backend processing)</h1>')
@@ -34,10 +58,19 @@ app.get('/testlogin', (req, res) => {
 app.post('/testsignIn', (req, res) => {
     const email = req.body.email
     const password = req.body.pass
-    let page = `
-        (POST) You entered: ${email} and ${password}
-    `;
-    res.send(page)
+    // let page = `
+    //     (POST) You entered: ${email} and ${password}
+    // `;
+    // res.send(page)
+    const obj = {
+        a: email,
+        b: password,
+        c: '<h1>login success</h1>',
+        d: '<h1>login success</h1>',
+        start: 1,
+        end: 10
+    }
+    res.render('home', obj) // render ejs file
 })
 
 // req.query only for get
