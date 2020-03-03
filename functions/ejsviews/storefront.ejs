@@ -10,7 +10,7 @@
     <title>Store Front</title>
   </head>
   <body>
-    <%- include('partials/nav.ejs') %>
+    <%- include('partials/nav.ejs', {page: 'storefront'}) %>
     <h1>My Store</h1>
 
     <% if (error) { %>
