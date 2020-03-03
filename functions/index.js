@@ -46,8 +46,20 @@ const firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
-app.get('/', (req, res) => {  // Arrow: fn def is given directly -- request and response object
-    res.send('<h1>My Store (note: from backend processing)</h1>')
+  const Constants = require('./myconstants.js')
+
+app.get('/', async (req, res) => {  // Arrow: fn def is given directly -- request and response object
+    const coll = firebase.firestore().collection(Constants.COLL_PRODUCTS)
+    try {
+        let products = []
+        const snapshot = await coll.orderBy("name").get()
+        snapshot.forEach(doc => {
+            products.push({id: doc.id, data: doc.data()})
+        })
+        res.send(JSON.stringify(products))
+    } catch (e) {
+        res.send(JSON.stringify(e))
+    }
 })
 
 // test code
