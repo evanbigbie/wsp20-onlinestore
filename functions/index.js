@@ -31,8 +31,10 @@ app.get('/show', frontendHandler);
 
 // backend programming
 
+const firebase = require('firebase')
+
 // Your web app's Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyD9lccgaGUFunyHA_wdJhWoaDcPNMN7ENQ",
     authDomain: "williamb-wsp20.firebaseapp.com",
     databaseURL: "https://williamb-wsp20.firebaseio.com",
