@@ -56,9 +56,10 @@ app.get('/', async (req, res) => {  // Arrow: fn def is given directly -- reques
         snapshot.forEach(doc => {
             products.push({id: doc.id, data: doc.data()})
         })
-        res.send(JSON.stringify(products))
+        // can pass one object with render
+        res.render('storefront.ejs', {error: false, products})
     } catch (e) {
-        res.send(JSON.stringify(e))
+        res.render('storefront.ejs', {error: e}) // error: true
     }
 })
 
