@@ -48,7 +48,7 @@ const firebaseConfig = {
 
   const Constants = require('./myconstants.js')
 
-app.get('/', async (req, res) => {  // Arrow: fn def is given directly -- request and response object
+app.get('/', auth, async (req, res) => {  // Arrow: fn def is given directly -- request and response object
     const coll = firebase.firestore().collection(Constants.COLL_PRODUCTS)
     try {
         let products = []
@@ -57,23 +57,61 @@ app.get('/', async (req, res) => {  // Arrow: fn def is given directly -- reques
             products.push({id: doc.id, data: doc.data()})
         })
         // can pass one object with render
-        res.render('storefront.ejs', {error: false, products})
+        res.render('storefront.ejs', {error: false, products, user: req.user})
     } catch (e) {
-        res.render('storefront.ejs', {error: e}) // error: true
+        res.render('storefront.ejs', {error: e, user: req.user}) // error: true
     }
 })
 
-app.get('/b/about', (req, res) => {
-    res.render('about.ejs')
+// auth is a function being called first
+app.get('/b/about', auth, (req, res) => {
+    res.render('about.ejs', {user: req.user})
 })
 
-app.get('/b/contact', (req, res) => {
-    res.render('contact.ejs')
+app.get('/b/contact', auth, (req, res) => {
+    res.render('contact.ejs', {user: req.user})
 })
 
 app.get('/b/signin', (req, res) => {
-    res.render('signin.ejs')
+    res.render('signin.ejs', {error: false, user: req.user})
 })
+
+app.post('/b/signin', async (req, res) => {
+    const email = req.body.email
+    const password = req.body.password
+    const auth = firebase.auth()
+    try {
+        const user = await auth.signInWithEmailAndPassword(email, password)
+        res.redirect('/')
+    } catch (e) {
+        res.render('signin', {error: e, user: req.user})
+    }
+})
+
+app.get('/b/signout', async (req, res) => {
+    try {
+        await firebase.auth().signOut()
+        res.redirect('/')
+    } catch (e) {
+        res.send('Error: sign out')
+    }
+})
+
+app.get('/b/profile', auth, (req, res) => {
+    if (!req.user) {
+        res.redirect('/b/signin')
+    } else {
+        res.render('profile', {user: req.user})
+    }
+})
+
+// middleware
+
+// next means that (req, res) will be called after auth is called in app.get fns
+function auth(req, res, next) {
+    req.user = firebase.auth().currentUser
+    next()
+}
 
 // test code
 

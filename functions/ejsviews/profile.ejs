@@ -7,13 +7,13 @@
 
     <%- include('partials/header.ejs') %>
 
-    <title>Contact</title>
+    <title>Profile</title>
   </head>
   <body>
     <%- include('partials/nav.ejs', {page: 'contact', user}) %>
     
-    <h1>Contact</h1>
-
+    <h1>Profile</h1>
+    <%= JSON.stringify(user) %>
     
 
     <%- include('partials/scripts.ejs') %>
